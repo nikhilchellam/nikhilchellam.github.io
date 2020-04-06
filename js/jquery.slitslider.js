@@ -4,30 +4,13 @@
  *
  * Licensed under the MIT license.
  * http://www.opensource.org/licenses/mit-license.php
- *
+ * 
  * Copyright 2012, Codrops
  * http://www.codrops.com
  */
-$.fn.slitsliderEmulateTransitionEnd = function (duration) {
-	var transEndEventNames = {
-		'WebkitTransition' : 'webkitTransitionEnd',
-		'MozTransition'    : 'transitionend',
-		'OTransition'      : 'oTransitionEnd',
-		'msTransition'     : 'MSTransitionEnd',
-		'transition'       : 'transitionend'
-	},
-	transEndEventName = transEndEventNames[ Modernizr.prefixed('transition') ];
-
-	var called = false, $el = this
-	$(this).one(transEndEventName, function () { called = true })
-
-	var callback = function () { if (!called) $($el).trigger(transEndEventName) }
-	setTimeout(callback, duration)
-	return this
-}
 
 ;( function( $, window, undefined ) {
-
+	
 	'use strict';
 
 	/*
@@ -77,10 +60,10 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 		Modernizr = window.Modernizr;
 
 	$.Slitslider = function( options, element ) {
-
+		
 		this.$elWrapper = $( element );
 		this._init( options );
-
+		
 	};
 
 	$.Slitslider.defaults = {
@@ -108,7 +91,7 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 	$.Slitslider.prototype = {
 
 		_init : function( options ) {
-
+			
 			// options
 			this.options = $.extend( true, {}, $.Slitslider.defaults, options );
 
@@ -141,9 +124,9 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 			this._loadEvents();
 			// slideshow
 			if( this.options.autoplay ) {
-
+			
 				this._startSlideshow();
-
+			
 			}
 
 		},
@@ -157,35 +140,35 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 
 		},
 		_layout : function() {
-
+			
 			this.$slideWrapper = $( '<div class="sl-slides-wrapper" />' );
-
+			
 			// wrap the slides
 			this.$slides.wrapAll( this.$slideWrapper ).each( function( i ) {
-
+				
 				var $slide = $( this ),
 					// vertical || horizontal
 					orientation = $slide.data( 'orientation' );
-
+					
 				$slide.addClass( 'sl-slide-' + orientation )
 					  .children()
 					  .wrapAll( '<div class="sl-content-wrapper" />' )
 					  .wrapAll( '<div class="sl-content" />' );
-
+			
 			} );
-
+			
 			// set the right size of the slider/slides for the current window size
 			this._setSize();
 			// show first slide
 			this.$slides.eq( this.current ).show();
-
+			
 		},
 		_navigate : function( dir, pos ) {
-
+			
 			if( this.isAnimating || this.slidesCount < 2 ) {
-
+			
 				return false;
-
+			
 			}
 
 			this.isAnimating = true;
@@ -212,24 +195,24 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 			}
 
 			this.options.onBeforeChange( $currentSlide, this.current );
-
+			
 			// next slide to be shown
 			var $nextSlide = this.$slides.eq( this.current ),
 				// the slide we want to cut and animate
 				$movingSlide = ( dir === 'next' ) ? $currentSlide : $nextSlide,
-
+				
 				// the following are the data attrs set for each slide
 				configData = $movingSlide.data(),
 				config = {};
-
+			
 			config.orientation = configData.orientation || 'horizontal',
 			config.slice1angle = configData.slice1Rotation || 0,
 			config.slice1scale = configData.slice1Scale || 1,
 			config.slice2angle = configData.slice2Rotation || 0,
 			config.slice2scale = configData.slice2Scale || 1;
-
+				
 			this._validateValues( config );
-
+			
 			var cssStyle = config.orientation === 'horizontal' ? {
 					marginTop : -this.size.height / 2
 				} : {
@@ -238,7 +221,7 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 				// default slide's slices style
 				resetStyle = {
 					'transform' : 'translate(0%,0%) rotate(0deg) scale(1)',
-					opacity : 1
+					opacity : 1 
 				},
 				// slice1 style
 				slice1Style	= config.orientation === 'horizontal' ? {
@@ -252,19 +235,19 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 				} : {
 					'transform' : 'translateX(' + this.options.translateFactor + '%) rotate(' + config.slice2angle + 'deg) scale(' + config.slice2scale + ')'
 				};
-
+			
 			if( this.options.optOpacity ) {
-
+			
 				slice1Style.opacity = 0;
 				slice2Style.opacity = 0;
-
+			
 			}
-
+			
 			// we are adding the classes sl-trans-elems and sl-trans-back-elems to the slide that is either coming "next"
 			// or going "prev" according to the direction.
 			// the idea is to make it more interesting by giving some animations to the respective slide's elements
 			//( dir === 'next' ) ? $nextSlide.addClass( 'sl-trans-elems' ) : $currentSlide.addClass( 'sl-trans-back-elems' );
-
+			
 			$currentSlide.removeClass( 'sl-trans-elems' );
 
 			var transitionProp = {
@@ -277,35 +260,35 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 						.wrap( $( '<div class="sl-content-slice" />' ).css( transitionProp ) )
 						.parent()
 						.cond(
-							dir === 'prev',
+							dir === 'prev', 
 							function() {
-
+							
 								var slice = this;
 								this.css( slice1Style );
 								setTimeout( function() {
-
+									
 									slice.css( resetStyle );
 
 								}, 50 );
-
-							},
+										 
+							}, 
 							function() {
-
+								
 								var slice = this;
 								setTimeout( function() {
-
+									
 									slice.css( slice1Style );
 
 								}, 50 );
-
+						
 							}
 						)
 						.clone()
 						.appendTo( $movingSlide )
 						.cond(
-							dir === 'prev',
+							dir === 'prev', 
 							function() {
-
+								
 								var slice = this;
 								this.css( slice2Style );
 								setTimeout( function() {
@@ -318,7 +301,7 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 
 											self._onEndNavigate( slice, $currentSlide, dir );
 
-										} ).slitsliderEmulateTransitionEnd( self.options.speed + 100);
+										} );
 
 									}
 									else {
@@ -328,22 +311,22 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 									}
 
 								}, 50 );
-
+						
 							},
 							function() {
-
+								
 								var slice = this;
 								setTimeout( function() {
 
 									$nextSlide.addClass( 'sl-trans-elems' );
-
+									
 									if( self.support ) {
 
 										slice.css( slice2Style ).on( self.transEndEventName, function() {
 
 											self._onEndNavigate( slice, $currentSlide, dir );
 
-										} ).slitsliderEmulateTransitionEnd( self.options.speed + 100);
+										} );
 
 									}
 									else {
@@ -353,95 +336,95 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 									}
 
 								}, 50 );
-
+								
 							}
 						)
 						.find( 'div.sl-content-wrapper' )
 						.css( cssStyle );
-
+			
 			$nextSlide.show();
-
+			
 		},
 		_validateValues : function( config ) {
-
+			
 			// OK, so we are restricting the angles and scale values here.
 			// This is to avoid the slices wrong sides to be shown.
 			// you can adjust these values as you wish but make sure you also ajust the
 			// paddings of the slides and also the options.translateFactor value and scale data attrs
 			if( config.slice1angle > this.options.maxAngle || config.slice1angle < -this.options.maxAngle ) {
-
+				
 				config.slice1angle = this.options.maxAngle;
-
+			
 			}
 			if( config.slice2angle > this.options.maxAngle  || config.slice2angle < -this.options.maxAngle ) {
-
+				
 				config.slice2angle = this.options.maxAngle;
-
+			
 			}
 			if( config.slice1scale > this.options.maxScale || config.slice1scale <= 0 ) {
-
+			
 				config.slice1scale = this.options.maxScale;
-
+			
 			}
 			if( config.slice2scale > this.options.maxScale || config.slice2scale <= 0 ) {
-
+				
 				config.slice2scale = this.options.maxScale;
-
+			
 			}
 			if( config.orientation !== 'vertical' && config.orientation !== 'horizontal' ) {
-
+			
 				config.orientation = 'horizontal'
-
+			
 			}
-
+			
 		},
 		_onEndNavigate : function( $slice, $oldSlide, dir ) {
-
+			
 			// reset previous slide's style after next slide is shown
 			var $slide = $slice.parent(),
 				removeClasses = 'sl-trans-elems sl-trans-back-elems';
-
+			
 			// remove second slide's slice
 			$slice.remove();
 			// unwrap..
 			$slide.css( 'z-index', 1 )
 				  .find( 'div.sl-content-wrapper' )
 				  .unwrap();
-
+			
 			// hide previous current slide
 			$oldSlide.hide().removeClass( removeClasses );
 			$slide.removeClass( removeClasses );
 			// now we can navigate again..
 			this.isAnimating = false;
 			this.options.onAfterChange( $slide, this.current );
-
+			
 		},
 		_setSize : function() {
-
+		
 			// the slider and content wrappers will have the window's width and height
 			var cssStyle = {
 				width : this.size.width,
 				height : this.size.height
 			};
-
+			
 			this.$el.css( cssStyle ).find( 'div.sl-content-wrapper' ).css( cssStyle );
-
+		
 		},
 		_loadEvents : function() {
-
+			
 			var self = this;
-
+			
 			$window.on( 'debouncedresize.slitslider', function( event ) {
-
+				
 				// update size values
 				self._getSize();
 				// set the sizes again
 				self._setSize();
-
+				
 			} );
 
 			if ( this.options.keyboard ) {
-
+				
 				$document.on( 'keydown.slitslider', function(e) {
 
 					var keyCode = e.keyCode || e.which,
@@ -453,15 +436,15 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 						};
 
 					switch (keyCode) {
-
+						
 						case arrow.left :
 
 							self._stopSlideshow();
 							self._navigate( 'prev' );
 							break;
-
+						
 						case arrow.right :
-
+							
 							self._stopSlideshow();
 							self._navigate( 'next' );
 							break;
@@ -471,7 +454,7 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 				} );
 
 			}
-
+		
 		},
 		_startSlideshow: function() {
 
@@ -502,7 +485,7 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 
 		},
 		_destroy : function( callback ) {
-
+			
 			this.$el.off( '.slitslider' ).removeData( 'slitslider' );
 			$window.off( '.slitslider' );
 			$document.off( '.slitslider' );
@@ -530,8 +513,8 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 			this.$slides = this.$slides.add( $slides );
 
 			var self = this;
-
-
+			
+			
 			$slides.each( function( i ) {
 
 				var $slide = $( this ),
@@ -550,7 +533,7 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 			this._setSize();
 
 			this.slidesCount = this.$slides.length;
-
+			
 			if ( callback ) {
 
 				callback.call( $items );
@@ -605,7 +588,7 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 		// public method: pauses the slideshow
 		pause : function() {
 
-			if( this.isPlaying || this.options.autoplay) {
+			if( this.isPlaying ) {
 
 				this._stopSlideshow();
 
@@ -622,72 +605,72 @@ $.fn.slitsliderEmulateTransitionEnd = function (duration) {
 		destroy : function( callback ) {
 
 			this._destroy( callback );
-
+		
 		}
 
 	};
-
+	
 	var logError = function( message ) {
 
 		if ( window.console ) {
 
 			window.console.error( message );
-
+		
 		}
 
 	};
-
+	
 	$.fn.slitslider = function( options ) {
 
 		var self = $.data( this, 'slitslider' );
-
+		
 		if ( typeof options === 'string' ) {
-
+			
 			var args = Array.prototype.slice.call( arguments, 1 );
-
+			
 			this.each(function() {
-
+			
 				if ( !self ) {
 
 					logError( "cannot call methods on slitslider prior to initialization; " +
 					"attempted to call method '" + options + "'" );
 					return;
-
+				
 				}
-
+				
 				if ( !$.isFunction( self[options] ) || options.charAt(0) === "_" ) {
 
 					logError( "no such method '" + options + "' for slitslider self" );
 					return;
-
+				
 				}
-
+				
 				self[ options ].apply( self, args );
-
+			
 			});
-
-		}
+		
+		} 
 		else {
-
+		
 			this.each(function() {
-
+				
 				if ( self ) {
 
 					self._init();
-
+				
 				}
 				else {
 
 					self = $.data( this, 'slitslider', new $.Slitslider( options, this ) );
-
+				
 				}
 
 			});
-
+		
 		}
-
+		
 		return self;
-
+		
 	};
-
+	
 } )( jQuery, window );
